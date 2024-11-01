@@ -147,6 +147,6 @@ foreach ($setting in $SecondPassXml.Unattend.Settings) {
 } #end foreach unattendXml.Unattend.Settings
 
 
-$SecondPassXml.Save($OOBEPath)
+$SecondPassXml.Save($SecondPassFile)
 $SecondPassXml.Save($RecoveryPath)
 $auditmode.save($UnattendPath)
