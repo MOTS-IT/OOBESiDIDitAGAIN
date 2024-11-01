@@ -179,7 +179,7 @@ netsh wlan export profile key=clear folder=c:\osdcloud\configs
 
 
 write-host "Startup script completed"
-
+Read-Host -Prompt "Press any key to continue" 
 write-host  -foregroundcolor Green "****************************************************"
 write-host  -foregroundcolor Green "               Rebooting in 10 seconds"
 write-host  -foregroundcolor Green "  You can safely remove the USB after this reboot"
