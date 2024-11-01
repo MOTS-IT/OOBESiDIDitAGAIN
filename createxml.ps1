@@ -12,7 +12,7 @@ write-host "UserLocale:$($userlocale)"
 Write-host "SystemLocale:$($SysLocale)"
 Write-host "TimeZone:$($TimeZone)"
 
-$auditmodescript = "$($Global:ScriptRootURL)/MDtartAuditMode.ps1"
+$auditmodescript = "$($Global:ScriptRootURL)/startAuditMode.ps1"
 $UnattendPath = "c:\windows\panther\unattend\unattend.xml"
 $SecondPassFile = "c:\windows\panther\unattend\oobe.xml"
 $RecoveryPath = "c:\recovery\autoapply\unattend.xml"
