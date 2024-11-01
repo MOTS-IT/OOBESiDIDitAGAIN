@@ -39,26 +39,7 @@ Write-Host "Continuing to Install Windows..."
 ## Country 
 Clear-Host
 Write-Host "Select Country"
-Write-Host "1 - Belgium"
-Write-Host "2 - Brazil"
-Write-Host "3 - China"
-Write-Host "4 - France"
-Write-Host "5 - Germany"
-Write-Host "6 - Hong Kong"
-Write-Host "7 - Indonesia"
-Write-Host "8 - Italy"
-Write-Host "9 - Japan"
-Write-Host "10 - Korea"
-Write-Host "11 - Luxembourg"
-Write-Host "12 - Netherlands"
 Write-Host "13 - Poland"
-Write-Host "14 - Portugal"
-Write-Host "15 - Russia"
-Write-Host "16 - Singapore"
-Write-Host "17 - Spain"
-Write-Host "18 - Sweden"
-Write-Host "19 - United Arab Emirates"
-Write-Host "20 - Thailand"
 Write-Host "21 - United Kingdom"
 Write-Host "22 - United States"
 Write-Host "Q - quit and restart"
@@ -76,26 +57,7 @@ else
     {
     switch($CountrySelection) 
         {
-        1     {$Country = "Belgium";$TimeyWimey = 'Romance Standard Time'} # 21 - Kingdom of Belgium 
-        2     {$Country = "Brazil";$TimeyWimey = 'E. South America Standard Time'} # 32 - Federative Republic of Brazil
-        3     {$Country = "China";$TimeyWimey = 'China Standard Time'} # 45 - People's Republic of China 
-        4     {$Country = "France";$TimeyWimey = 'Romance Standard Time'} # 84 - French Republic 
-        5     {$Country = "Germany";$TimeyWimey = 'W. Europe Standard Time'} # 94 - Federal Republic of Germany
-        6     {$Country = "Hong Kong";$TimeyWimey = 'China Standard Time'} # 104 - Hong Kong Special Administrative Region
-        7     {$Country = "Indonesia";$TimeyWimey = 'SE Asia Standard Time';$CCulture = 'id-ID'} # 111 - Republic of Indonesia
-        8     {$Country = "Italy";$TimeyWimey = 'W. Europe Standard Time'} # 118 - Italian Republic
-        9     {$Country = "Japan";$TimeyWimey = 'Tokyo Standard Time'} # 122 - Japan
-        10    {$Country = "Korea";$TimeyWimey = 'Korea Standard Time'} # 134 - Republic of Korea
-        11    {$Country = "Luxembourg";$TimeyWimey = 'W. Europe Standard Time'} # 147 - Grand Duchy of Luxembourg
-        12    {$Country = "Netherlands";$TimeyWimey = 'W. Europe Standard Time'} # 176 - Kingdom of the Netherlands
         13    {$Country = "Poland";$TimeyWimey = 'Central European Standard Time';$desiredkb = 'pl-PL'} # 191 - Republic of Poland
-        14    {$Country = "Portugal";$TimeyWimey = 'GMT Standard Time'} # 193 - Portuguese Republic
-        15    {$Country = "Russia";$TimeyWimey = 'Russian Standard Time'} # 203 - Russian Federation
-        16    {$Country = "Singapore";$TimeyWimey = 'Singapore Standard Time';$CCulture = 'en-SG'} # 215 - Republic of Singapore
-        17    {$Country = "Spain";$TimeyWimey = 'Romance Standard Time'} # 217 - Kingdom of Spain
-        18    {$Country = "Sweden";$TimeyWimey = 'W. Europe Standard Time'} # 221 - Kingdom of Sweden
-        19    {$Country = "UAE";$TimeyWimey = 'Arabian Standard Time';$CCulture = 'ar-AE'} # 224 - United Arab Emirates
-        20    {$Country = "Thailand";$TimeyWimey = 'SE Asia Standard Time'} # 227 - Kingdom of Thailand
         21    {$Country = "UK";$TimeyWimey = 'GMT Standard Time';$desiredkb = 'en-GB'} # 242 - United Kingdom
         22    {$Country = "US";$TimeyWimey = 'Eastern Standard Time'} # 244 - United States
         }
@@ -112,7 +74,7 @@ $Global:MyOSDCloud = [ordered]@{
     WindowsUpdate = [bool]$false
     WindowsUpdateDrivers = [bool]$false
     WindowsDefenderUpdate = [bool]$true
-    SetTimeZone = [bool]$true
+    SetTimeZone = [bool]$false
     ClearDiskConfirm = [bool]$False
     ShutdownSetupComplete = [bool]$false
     SyncMSUpCatDriverUSB = [bool]$false
@@ -133,33 +95,6 @@ invoke-osdcloud
 
 write-host "Windows Restore complete"
 start-sleep 5
-
-
-
-
-# Load the offline registry hive from the OS volume
-Write-Host "writing to offline registry"
-$HivePath = "c:\Windows\System32\config\SOFTWARE"
-reg load "HKLM\NewOS" $HivePath 
-Start-Sleep -Seconds 5
-
-# Set ScriptRootURL
-$RegistryKey = "HKLM:\NewOS\Linklaters" 
-$Result = New-Item -Path $RegistryKey -ItemType Directory -Force
-$Result.Handle.Close()
-$RegistryValue = "LLScriptRootURL"
-$RegistryValueType = "String"
-$RegistryValueData = $ScriptRootURL
-$Result = New-ItemProperty -Path $RegistryKey -Name $RegistryValue -PropertyType $RegistryValueType -Value $RegistryValueData -Force
-    
-# Cleanup (to prevent access denied issue unloading the registry hive)
-Remove-Variable Result
-Get-Variable Registry* | Remove-Variable
-Start-Sleep -Seconds 5
-
-# Unload the registry hive
-Set-Location X:\
-reg unload "HKLM\NewOS"
 
 
 # Download custom file(s)
