@@ -176,7 +176,7 @@ New-Item c:\windows\panther\unattend -force -ItemType Directory
 #Save the wifi profile for use later
 netsh wlan export profile key=clear folder=c:\osdcloud\configs
 
-cls
+
 
 write-host "Startup script completed"
 
