@@ -64,18 +64,6 @@ $boottowindows = [xml] @"
                     <Path>PowerShell -executionpolicy bypass -Command "c:\windows\setup\scripts\wificonnect.ps1"</Path>
                 </RunSynchronousCommand>
                 <RunSynchronousCommand wcm:action="add">
-                    <Order>2</Order>
-                    <Description>LL:Installing Windows Updates - Run 1</Description>
-                    <Path>PowerShell -executionpolicy bypass -Command "start-windowsupdate"</Path>
-                    <WillReboot>Always</WillReboot>
-                </RunSynchronousCommand>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>3</Order>
-                    <Description>LL:Installing Windows Updates - Run 2</Description>
-                    <Path>PowerShell -executionpolicy bypass -Command "start-windowsupdate"</Path>
-                    <WillReboot>Always</WillReboot>
-                </RunSynchronousCommand>
-                <RunSynchronousCommand wcm:action="add">
                     <Order>4</Order>
                     <Description>LL:Execute Audit Mode script</Description>
                     <Path>PowerShell -executionpolicy bypass -Command "c:\windows\setup\scripts\startauditmode.ps1"</Path>
