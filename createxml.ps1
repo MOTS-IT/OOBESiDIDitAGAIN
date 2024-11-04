@@ -12,15 +12,40 @@ write-host "UserLocale:$($userlocale)"
 Write-host "SystemLocale:$($SysLocale)"
 Write-host "TimeZone:$($TimeZone)"
 
-$auditmodescript = "$($Global:ScriptRootURL)/startAuditMode.ps1"
-$UnattendPath = "c:\windows\panther\unattend\unattend.xml"
-$SecondPassFile = "c:\windows\panther\unattend\oobe.xml"
+$auditmodescript = "$($Global:ScriptRootURL)/StartAuditMode.ps1"
+$XMLPath = "c:\windows\panther\unattend\unattend.xml"
+$OOBEPath = "c:\windows\panther\unattend\oobe.xml"
 $RecoveryPath = "c:\recovery\autoapply\unattend.xml"
 
 $result = New-Item c:\windows\panther\unattend -ItemType Directory -Force
 $result = New-Item c:\recovery\autoapply -ItemType Directory -Force
 
-$auditmode = [xml] @"
+$UnattendXml = [xml] @'
+<?xml version="1.0" encoding="utf-8"?>
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+    <settings pass="oobeSystem">
+        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <OOBE>
+                <ProtectYourPC>3</ProtectYourPC>
+                <HideLocalAccountScreen>true</HideLocalAccountScreen>
+                <HideEULAPage>true</HideEULAPage>
+            </OOBE>
+            <RegisteredOrganization>Linklaters</RegisteredOrganization>
+            <RegisteredOwner>Linklaters User</RegisteredOwner>
+            <TimeZone>UTC</TimeZone>
+        </component>
+        <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <InputLocale>en-US</InputLocale>
+            <SystemLocale>en-US</SystemLocale>
+            <UILanguage>en-US</UILanguage>
+            <UserLocale>en-US</UserLocale>
+        </component>
+    </settings>
+    <cpi:offlineImage cpi:source="wim:c:/win11-unattend/sources/install.wim#Windows 11 Enterprise" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
+</unattend>
+'@
+
+$boottowindows = [xml] @"
 <?xml version="1.0" encoding="utf-8"?>
 <unattend xmlns="urn:schemas-microsoft-com:unattend">
     <settings pass="oobeSystem">
@@ -37,6 +62,24 @@ $auditmode = [xml] @"
                     <Order>1</Order>
                     <Description>LL:Start Wifi</Description>
                     <Path>PowerShell -executionpolicy bypass -Command "c:\windows\setup\scripts\wificonnect.ps1"</Path>
+                </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>2</Order>
+                    <Description>LL:Installing Windows Updates - Run 1</Description>
+                    <Path>PowerShell -executionpolicy bypass -Command "start-windowsupdate"</Path>
+                    <WillReboot>Always</WillReboot>
+                </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>3</Order>
+                    <Description>LL:Installing Windows Updates - Run 2</Description>
+                    <Path>PowerShell -executionpolicy bypass -Command "start-windowsupdate"</Path>
+                    <WillReboot>Always</WillReboot>
+                </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>4</Order>
+                    <Description>LL:Execute Audit Mode script</Description>
+                    <Path>PowerShell -executionpolicy bypass -Command "c:\windows\setup\scripts\startauditmode.ps1"</Path>
+                    <WillReboot>Always</WillReboot>
                 </RunSynchronousCommand>
             </RunSynchronous>
         </component>
@@ -58,16 +101,6 @@ $auditmode = [xml] @"
                     <PlainText>false</PlainText>
                 </AdministratorPassword>
             </UserAccounts>
-            <TimeZone></TimeZone>
-        </component>
-    </settings>
-    <settings pass="specialize">
-        <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <InputLocale>en-US</InputLocale>
-            <SystemLocale>en-US</SystemLocale>
-            <UILanguage>en-US</UILanguage>
-            <UILanguageFallback></UILanguageFallback>
-            <UserLocale>en-US</UserLocale>
         </component>
     </settings>
     <cpi:offlineImage cpi:source="wim:c:/win11-unattend/sources/install.wim#Windows 11 Enterprise" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
@@ -75,35 +108,8 @@ $auditmode = [xml] @"
 "@
 
 
-$SecondPassXml = [xml] @'
-<?xml version="1.0" encoding="utf-8"?>
-<unattend xmlns="urn:schemas-microsoft-com:unattend">
-    <settings pass="oobeSystem">
-        <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <InputLocale>en-US</InputLocale>
-            <SystemLocale>en-US</SystemLocale>
-            <UILanguage>en-US</UILanguage>
-            <UserLocale>en-US</UserLocale>
-        </component>
-        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <OOBE>
-                <ProtectYourPC>3</ProtectYourPC>
-                <HideLocalAccountScreen>true</HideLocalAccountScreen>
-                <HideEULAPage>true</HideEULAPage>
-            </OOBE>
-            <RegisteredOrganization>MD</RegisteredOrganization>
-            <RegisteredOwner>MD User</RegisteredOwner>
-            <TimeZone>UTC</TimeZone>
-        </component>
-    </settings>
-    <cpi:offlineImage cpi:source="wim:c:/win11-unattend/sources/install.wim#Windows 11 Enterprise" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
-</unattend>
-'@
 
-
-
-
-foreach ($setting in $auditmode.Unattend.Settings) {
+foreach ($setting in $unattendXml.Unattend.Settings) {
     #Write-host "Checking Setting:$($setting) in Unattend"
     foreach ($component in $setting.Component) {
         #write-host "Checking component:$($component) in Unattend"
@@ -122,7 +128,7 @@ foreach ($setting in $auditmode.Unattend.Settings) {
 } #end foreach unattendXml.Unattend.Settings
 
 
-foreach ($setting in $SecondPassXml.Unattend.Settings) {
+foreach ($setting in $boottowindows.Unattend.Settings) {
     #Write-host "Checking Setting:$($setting) in Unattend"
     foreach ($component in $setting.Component) {
         #write-host "Checking component:$($component) in Unattend"
@@ -141,7 +147,6 @@ foreach ($setting in $SecondPassXml.Unattend.Settings) {
 } #end foreach unattendXml.Unattend.Settings
 
 
-$SecondPassXml.Save($SecondPassFile)
-$SecondPassXml.Save($RecoveryPath)
-
-$auditmode.save($UnattendPath)
+$unattendXml.Save($OOBEPath)
+$unattendXml.Save($RecoveryPath)
+$boottowindows.save($xmlpath)
