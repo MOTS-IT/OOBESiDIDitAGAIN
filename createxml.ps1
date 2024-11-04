@@ -38,12 +38,6 @@ $auditmode = [xml] @"
                     <Description>LL:Start Wifi</Description>
                     <Path>PowerShell -executionpolicy bypass -Command "c:\windows\setup\scripts\wificonnect.ps1"</Path>
                 </RunSynchronousCommand>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>4</Order>
-                    <Description>LL:Execute Audit Mode script</Description>
-                    <Path>PowerShell -executionpolicy bypass -Command "c:\windows\setup\scripts\startauditmode.ps1"</Path>
-                    <WillReboot>Always</WillReboot>
-                </RunSynchronousCommand>
             </RunSynchronous>
         </component>
     </settings>
@@ -149,5 +143,5 @@ foreach ($setting in $SecondPassXml.Unattend.Settings) {
 
 $SecondPassXml.Save($SecondPassFile)
 $SecondPassXml.Save($RecoveryPath)
-$SecondPassXml.save($UnattendPath)
+
 #$auditmode.save($UnattendPath)
