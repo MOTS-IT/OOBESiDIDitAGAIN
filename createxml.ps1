@@ -111,7 +111,7 @@ foreach ($setting in $SysprepXml.Unattend.Settings) {
     foreach ($component in $setting.Component) {
         if ((($setting.'Pass' -eq 'oobeSystem') -or ($setting.'Pass' -eq 'specialize')) -and ($component.'Name' -eq 'Microsoft-Windows-International-Core')) {
             $component.InputLocale = $userlocale
-            $component.SystemLocale = $SysLocale
+            $component.SystemLocale = $userlocale
             $component.UILanguage = $SysLocale
             $component.UserLocale = $SysLocale
         }
