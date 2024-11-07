@@ -113,7 +113,7 @@ foreach ($setting in $SysprepXml.Unattend.Settings) {
             $component.InputLocale = $userlocale
             $component.SystemLocale = $SysLocale
             $component.UILanguage = $SysLocale
-            $component.UserLocale = $userlocale
+            $component.UserLocale = $SysLocale
         }
         if ((($setting.'Pass' -eq 'oobeSystem') -or ($setting.'Pass' -eq 'specialize')) -and ($component.'Name' -eq 'Microsoft-Windows-Shell-Setup')) {
             #Write-Host "Updating Locale settings"
