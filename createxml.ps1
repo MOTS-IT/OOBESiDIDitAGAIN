@@ -117,7 +117,7 @@ $AuditModeXml.save($UnattendPath)
 $SysprepXml.Save($SysprepPath)
 $SysprepXml.Save($RecoveryPath)
 
-$CPLXML = @"
+$CPLXML = [xml] @"
 <gs:GlobalizationServices xmlns:gs="urn:longhornGlobalizationUnattend">
  
 <!-- user list --> 
