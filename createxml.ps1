@@ -110,10 +110,10 @@ foreach ($setting in $SysprepXml.Unattend.Settings) {
     #Write-host "Checking Setting:$($setting) in Unattend"
     foreach ($component in $setting.Component) {
         if ((($setting.'Pass' -eq 'oobeSystem') -or ($setting.'Pass' -eq 'specialize')) -and ($component.'Name' -eq 'Microsoft-Windows-International-Core')) {
-            $component.InputLocale = $userlocale
-            $component.SystemLocale = $userlocale
-            $component.UILanguage = $SysLocale
-            $component.UserLocale = $SysLocale
+            $component.InputLocale = $userlocale #Specifies the system input locale and the keyboard layout
+            $component.SystemLocale = $userlocale #Specifies the language for non-Unicode programs
+            $component.UILanguage = $SysLocale #Specifies the system default user interface (UI) language
+            $component.UserLocale = $userlocale #Specifies the per-user settings used for formatting dates, times, currency, and numbers
         }
         if ((($setting.'Pass' -eq 'oobeSystem') -or ($setting.'Pass' -eq 'specialize')) -and ($component.'Name' -eq 'Microsoft-Windows-Shell-Setup')) {
             #Write-Host "Updating Locale settings"
@@ -125,3 +125,5 @@ foreach ($setting in $SysprepXml.Unattend.Settings) {
 $AuditModeXml.save($UnattendPath)
 $SysprepXml.Save($SysprepPath)
 $SysprepXml.Save($RecoveryPath)
+
+
