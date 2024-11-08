@@ -4,6 +4,7 @@
     param (
         [String]$userlocale = "en-US",
         [String]$TimeZone = 'Eastern Standard Time'
+        [String]$GeoID = '191'
     )
 
 $SysLocale = "en-US"
@@ -16,6 +17,8 @@ $auditmodescript = "$($Global:ScriptRootURL)/StartAuditMode.ps1"
 $UnattendPath = "c:\windows\panther\unattend\unattend.xml"
 $SysprepPath = "c:\windows\panther\unattend\oobe.xml"
 $RecoveryPath = "c:\recovery\autoapply\unattend.xml"
+$CPLXMLPath = "c:\recovery\test.xml"  # move to LL\Eng\Lang\test.xml in oobe manually 
+
 
 $result = New-Item c:\windows\panther\unattend -ItemType Directory -Force
 $result = New-Item c:\recovery\autoapply -ItemType Directory -Force
@@ -111,12 +114,11 @@ foreach ($setting in $SysprepXml.Unattend.Settings) {
     foreach ($component in $setting.Component) {
         if ((($setting.'Pass' -eq 'oobeSystem') -or ($setting.'Pass' -eq 'specialize')) -and ($component.'Name' -eq 'Microsoft-Windows-International-Core')) {
             $component.InputLocale = $userlocale #Specifies the system input locale and the keyboard layout
-            $component.SystemLocale = $userlocale #Specifies the language for non-Unicode programs
-            $component.UILanguage = $SysLocale #Specifies the system default user interface (UI) language
-            $component.UserLocale = $userlocale #Specifies the per-user settings used for formatting dates, times, currency, and numbers
+            #$component.SystemLocale = $SysLocale #Specifies the language for non-Unicode programs
+            #$component.UILanguage = $SysLocale #Specifies the system default user interface (UI) language
+            #$component.UserLocale = $SysLocale #Specifies the per-user settings used for formatting dates, times, currency, and numbers
         }
         if ((($setting.'Pass' -eq 'oobeSystem') -or ($setting.'Pass' -eq 'specialize')) -and ($component.'Name' -eq 'Microsoft-Windows-Shell-Setup')) {
-            #Write-Host "Updating Locale settings"
             $component.Timezone = $Timezone
         }
     } #end foreach setting.Component
@@ -125,5 +127,32 @@ foreach ($setting in $SysprepXml.Unattend.Settings) {
 $AuditModeXml.save($UnattendPath)
 $SysprepXml.Save($SysprepPath)
 $SysprepXml.Save($RecoveryPath)
+
+$CPLXML = @"
+<gs:GlobalizationServices xmlns:gs="urn:longhornGlobalizationUnattend">
+ 
+<!-- user list --> 
+    <gs:UserList>
+        <gs:User UserID="Current" CopySettingsToDefaultUserAcct="true" CopySettingsToSystemAcct="true"/> 
+    </gs:UserList>
+
+<!-- system locale -->
+    <gs:SystemLocale Name="$userlocale"/>
+
+<!--User Locale-->
+    <gs:UserLocale> 
+        <gs:Locale Name="$userlocale" SetAsCurrent="true" ResetAllSettings="false"/>
+    </gs:UserLocale>
+
+<!--location--> 
+ <gs:LocationPreferences> 
+        <gs:GeoID Value="$GeoID"/> 
+    </gs:LocationPreferences>
+    
+</gs:GlobalizationServices>
+"@
+
+$CPLXML.Save($CPLXMLPath)
+
 
 
