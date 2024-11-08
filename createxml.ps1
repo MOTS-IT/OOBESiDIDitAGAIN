@@ -3,7 +3,7 @@
 [CmdletBinding()]
     param (
         [String]$userlocale = "en-US",
-        [String]$TimeZone = 'Eastern Standard Time'
+        [String]$TimeZone = 'Eastern Standard Time',
         [String]$GeoID = '191'
     )
 
