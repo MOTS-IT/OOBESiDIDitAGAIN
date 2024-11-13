@@ -57,9 +57,9 @@ else
     {
     switch($CountrySelection) 
         {
-        13    {$Country = "Poland";$TimeyWimey = 'Central European Standard Time';$desiredkb = 'pl-PL'} # 191 - Republic of Poland
-        21    {$Country = "UK";$TimeyWimey = 'GMT Standard Time';$desiredkb = 'en-GB'} # 242 - United Kingdom
-        22    {$Country = "US";$TimeyWimey = 'Eastern Standard Time'} # 244 - United States
+        13    {$Country = "Poland";$Rootkeeby = '0415:00000415';$TimeyWimey = 'Central European Standard Time';$GeoID = '191'} # 191 - Republic of Poland
+        21    {$Country = "UK";$Rootkeeby = '0809:00000809';$TimeyWimey = 'GMT Standard Time';$GeoID = '242'} # 242 - United Kingdom
+        22    {$Country = "US";$Rootkeeby = '0409:00000409';$TimeyWimey = 'Eastern Standard Time';$GeoID = '244'} # 244 - United States
         }
     }
     
