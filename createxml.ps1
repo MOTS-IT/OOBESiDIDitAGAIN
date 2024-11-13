@@ -103,7 +103,7 @@ foreach ($setting in $SysprepXml.Unattend.Settings) {
     foreach ($component in $setting.Component) {
         if ((($setting.'Pass' -eq 'oobeSystem') -or ($setting.'Pass' -eq 'specialize')) -and ($component.'Name' -eq 'Microsoft-Windows-International-Core')) {
             $component.InputLocale = $userlocale #Specifies the system input locale and the keyboard layout
-            #$component.SystemLocale = $SysLocale #Specifies the language for non-Unicode programs
+            $component.SystemLocale = $userlocale #Specifies the language for non-Unicode programs
             #$component.UILanguage = $SysLocale #Specifies the system default user interface (UI) language
             #$component.UserLocale = $SysLocale #Specifies the per-user settings used for formatting dates, times, currency, and numbers
         }
